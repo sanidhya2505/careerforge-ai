@@ -2,28 +2,642 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>CareerForge AI</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CareerForge AI — Resume Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --iron-950:#120f0d;
+    --iron-900:#1b1613;
+    --steel-800:#2c251f;
+    --steel-700:#463a30;
+    --ember-500:#ff5a1f;
+    --ember-400:#ff7a3d;
+    --ember-300:#ffb347;
+    --spark-200:#ffe9b8;
+    --parchment-100:#f2ece1;
+    --ash-400:#a89d90;
+    --ash-600:#6e6459;
+    --success:#7cc47f;
+    --danger:#e8613f;
+    --radius:2px;
+  }
+
+  *{box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 20% -10%, rgba(255,90,31,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 0%, rgba(255,179,71,0.06), transparent 55%),
+      var(--iron-950);
+    color:var(--parchment-100);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.5;
+    min-height:100vh;
+  }
+
+  ::selection{ background:var(--ember-500); color:var(--iron-950); }
+
+  a{ color:inherit; }
+
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:0 24px 96px;
+  }
+
+  /* ---------- Header / Hero ---------- */
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:28px 0 8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ash-400);
+  }
+  .topbar .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--ember-500);
+    box-shadow:0 0 8px 2px rgba(255,90,31,0.6);
+  }
+
+  .hero{
+    padding:36px 0 40px;
+    border-bottom:1px solid var(--steel-700);
+  }
+
+  .kicker{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ember-400);
+    margin:0 0 14px;
+  }
+
+  h1.headline{
+    font-family:'Archivo Black', sans-serif;
+    font-weight:400;
+    font-size:clamp(2.4rem, 8vw, 3.4rem);
+    line-height:0.98;
+    letter-spacing:-0.01em;
+    margin:0 0 18px;
+    text-transform:uppercase;
+  }
+  h1.headline .accent{
+    color:var(--ember-500);
+    -webkit-text-stroke:0px;
+  }
+
+  .sub{
+    font-size:16px;
+    color:var(--ash-400);
+    max-width:46ch;
+    margin:0;
+  }
+
+  /* ---------- Form / Furnace ---------- */
+
+  .stage{
+    padding:36px 0;
+  }
+
+  .field-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ash-400);
+    display:block;
+    margin-bottom:10px;
+  }
+
+  .drop{
+    position:relative;
+    border:1.5px dashed var(--steel-700);
+    border-radius:var(--radius);
+    background:linear-gradient(180deg, var(--iron-900), var(--steel-800));
+    padding:38px 20px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+  }
+  .drop:hover{
+    border-color:var(--steel-700);
+    transform:translateY(-1px);
+  }
+  .drop.drag{
+    border-color:var(--ember-500);
+    box-shadow:0 0 0 1px var(--ember-500), 0 0 32px -6px rgba(255,90,31,0.55) inset, 0 0 40px -10px rgba(255,90,31,0.5);
+  }
+  .drop.filled{
+    border-color:var(--ember-400);
+    border-style:solid;
+  }
+  .drop input[type=file]{
+    position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+  }
+
+  .drop-glyph{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:28px;
+    color:var(--ember-500);
+    margin-bottom:10px;
+    display:block;
+    letter-spacing:0.05em;
+  }
+  .drop-text{ font-size:14px; color:var(--parchment-100); margin:0 0 4px; font-weight:500; }
+  .drop-sub{ font-size:12.5px; color:var(--ash-600); margin:0; }
+  .drop-file{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--spark-200);
+    margin-top:10px;
+    word-break:break-all;
+  }
+
+  .row{ margin-top:22px; }
+
+  input[type=text]{
+    width:100%;
+    background:var(--iron-900);
+    border:1px solid var(--steel-700);
+    color:var(--parchment-100);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:15px;
+    padding:13px 14px;
+    border-radius:var(--radius);
+    transition:border-color 0.2s ease;
+  }
+  input[type=text]::placeholder{ color:var(--ash-600); }
+  input[type=text]:focus{
+    outline:none;
+    border-color:var(--ember-500);
+    box-shadow:0 0 0 3px rgba(255,90,31,0.18);
+  }
+
+  button:focus-visible,
+  .drop:focus-within{
+    outline:2px solid var(--ember-300);
+    outline-offset:2px;
+  }
+
+  .forge-btn{
+    width:100%;
+    margin-top:26px;
+    background:var(--ember-500);
+    color:var(--iron-950);
+    border:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    font-size:14px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    padding:16px 20px;
+    border-radius:var(--radius);
+    cursor:pointer;
+    transition:background 0.2s ease, transform 0.12s ease, box-shadow 0.2s ease;
+    box-shadow:0 8px 24px -8px rgba(255,90,31,0.55);
+  }
+  .forge-btn:hover{ background:var(--ember-400); }
+  .forge-btn:active{ transform:scale(0.98); }
+  .forge-btn:disabled{
+    background:var(--steel-700);
+    color:var(--ash-400);
+    box-shadow:none;
+    cursor:not-allowed;
+  }
+
+  /* ---------- Results ---------- */
+
+  .results{
+    margin-top:44px;
+    padding-top:36px;
+    border-top:1px solid var(--steel-700);
+    display:none;
+  }
+  .results.show{ display:block; }
+
+  .results-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:22px;
+  }
+  .results-head h2{
+    font-family:'Archivo Black', sans-serif;
+    font-weight:400;
+    text-transform:uppercase;
+    font-size:20px;
+    margin:0;
+    letter-spacing:0.01em;
+  }
+  .results-head .role-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--ash-400);
+  }
+
+  /* Signature element: the temper gauge */
+  .gauge-wrap{
+    display:flex;
+    align-items:center;
+    gap:22px;
+    background:var(--iron-900);
+    border:1px solid var(--steel-700);
+    border-radius:var(--radius);
+    padding:22px;
+    margin-bottom:20px;
+  }
+  .gauge{
+    position:relative;
+    width:92px;
+    height:92px;
+    flex:none;
+  }
+  .gauge svg{ width:100%; height:100%; transform:rotate(-90deg); }
+  .gauge circle{ fill:none; stroke-width:8; }
+  .gauge .track{ stroke:var(--steel-700); }
+  .gauge .fill{
+    stroke:var(--ember-500);
+    stroke-linecap:round;
+    stroke-dasharray:251.2;
+    stroke-dashoffset:251.2;
+    transition:stroke-dashoffset 1.1s cubic-bezier(0.22,0.9,0.3,1), stroke 0.6s ease;
+    filter:drop-shadow(0 0 6px rgba(255,90,31,0.65));
+  }
+  .gauge-value{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:20px;
+    font-weight:600;
+  }
+  .gauge-meta{ flex:1; }
+  .gauge-meta .label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ash-400);
+    margin:0 0 6px;
+  }
+  .gauge-meta .verdict{
+    font-size:15px;
+    margin:0;
+    color:var(--spark-200);
+  }
+
+  .cards{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .card{
+    background:var(--iron-900);
+    border:1px solid var(--steel-700);
+    border-left:3px solid var(--ash-600);
+    border-radius:var(--radius);
+    padding:16px 18px;
+  }
+  .card.strength{ border-left-color:var(--success); }
+  .card.gap{ border-left-color:var(--danger); }
+  .card h3{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    margin:0 0 8px;
+    color:var(--ash-400);
+  }
+  .card p, .card ul{
+    margin:0;
+    font-size:14px;
+    color:var(--parchment-100);
+  }
+  .card ul{ padding-left:18px; }
+  .card li{ margin-bottom:4px; }
+
+  .keywords{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:4px;
+  }
+  .kw{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    padding:5px 10px;
+    border:1px solid var(--steel-700);
+    border-radius:20px;
+    color:var(--ember-300);
+    background:rgba(255,90,31,0.06);
+  }
+
+  .raw-toggle{
+    margin-top:18px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ash-400);
+    background:none;
+    border:none;
+    cursor:pointer;
+    text-decoration:underline;
+    padding:0;
+  }
+  pre.raw{
+    display:none;
+    margin-top:10px;
+    background:var(--iron-900);
+    border:1px solid var(--steel-700);
+    border-radius:var(--radius);
+    padding:14px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ash-400);
+    overflow-x:auto;
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+  pre.raw.show{ display:block; }
+
+  .status{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--ash-400);
+    margin-top:18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .status.error{ color:var(--danger); }
+  .spinner{
+    width:12px; height:12px;
+    border-radius:50%;
+    border:2px solid var(--steel-700);
+    border-top-color:var(--ember-500);
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  footer{
+    margin-top:56px;
+    padding-top:20px;
+    border-top:1px solid var(--steel-700);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--ash-600);
+    letter-spacing:0.04em;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  }
+</style>
 </head>
-<body class="bg-gray-50 max-w-xl mx-auto p-8 font-sans">
-  <h1 class="text-2xl font-bold text-blue-900 mb-4">CareerForge AI — Resume Forge</h1>
+<body>
+  <div class="wrap">
 
-  <form id="form" class="space-y-3">
-    <input type="file" name="resume" accept="application/pdf" required class="border p-2 w-full rounded" />
-    <input type="text" name="targetRole" placeholder="Target role (e.g. SDE Intern)" class="border p-2 w-full rounded" />
-    <button class="bg-blue-900 text-white px-4 py-2 rounded">Analyze Resume</button>
-  </form>
+    <div class="topbar"><span class="dot"></span> CAREERFORGE AI</div>
 
-  <pre id="output" class="mt-6 bg-white p-4 rounded shadow text-sm whitespace-pre-wrap"></pre>
+    <div class="hero">
+      <p class="kicker">Resume Forge · v1</p>
+      <h1 class="headline">Forge a resume<br>that clears <span class="accent">ATS.</span></h1>
+      <p class="sub">Drop your resume in. Name the role you're aiming for. We heat it against the job's real requirements and tell you exactly where it holds and where it breaks.</p>
+    </div>
 
-  <script>
-    document.getElementById("form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const output = document.getElementById("output");
-      output.textContent = "Analyzing...";
-      const res = await fetch("/api/analyze-resume", { method: "POST", body: new FormData(e.target) });
-      output.textContent = JSON.stringify(await res.json(), null, 2);
+    <div class="stage">
+      <form id="form">
+        <label class="field-label" for="resume-input">Raw material — your resume (PDF)</label>
+        <div class="drop" id="drop">
+          <input type="file" id="resume-input" name="resume" accept="application/pdf" required />
+          <span class="drop-glyph">⌁</span>
+          <p class="drop-text">Drop your PDF here, or click to browse</p>
+          <p class="drop-sub">One file · PDF only</p>
+          <p class="drop-file" id="filename"></p>
+        </div>
+
+        <div class="row">
+          <label class="field-label" for="targetRole">Target role</label>
+          <input type="text" id="targetRole" name="targetRole" placeholder="e.g. SDE Intern — Backend" />
+        </div>
+
+        <button class="forge-btn" id="submitBtn" type="submit">Cast into the forge</button>
+      </form>
+
+      <div class="status" id="status" style="display:none;"></div>
+
+      <div class="results" id="results">
+        <div class="results-head">
+          <h2>Temper report</h2>
+          <span class="role-tag" id="roleTag"></span>
+        </div>
+
+        <div class="gauge-wrap">
+          <div class="gauge">
+            <svg viewBox="0 0 100 100">
+              <circle class="track" cx="50" cy="50" r="40"></circle>
+              <circle class="fill" id="gaugeFill" cx="50" cy="50" r="40"></circle>
+            </svg>
+            <div class="gauge-value" id="gaugeValue">—</div>
+          </div>
+          <div class="gauge-meta">
+            <p class="label">Fit score</p>
+            <p class="verdict" id="verdict">Awaiting first strike.</p>
+          </div>
+        </div>
+
+        <div class="cards" id="cardStack"></div>
+
+        <button class="raw-toggle" id="rawToggle" type="button" style="display:none;">View raw response</button>
+        <pre class="raw" id="rawOutput"></pre>
+      </div>
+    </div>
+
+    <footer>sanidhya.dev — built to survive an applicant tracking system.</footer>
+  </div>
+
+<script>
+  const form = document.getElementById('form');
+  const drop = document.getElementById('drop');
+  const fileInput = document.getElementById('resume-input');
+  const filenameEl = document.getElementById('filename');
+  const submitBtn = document.getElementById('submitBtn');
+  const statusEl = document.getElementById('status');
+  const results = document.getElementById('results');
+  const roleTag = document.getElementById('roleTag');
+  const gaugeFill = document.getElementById('gaugeFill');
+  const gaugeValue = document.getElementById('gaugeValue');
+  const verdict = document.getElementById('verdict');
+  const cardStack = document.getElementById('cardStack');
+  const rawToggle = document.getElementById('rawToggle');
+  const rawOutput = document.getElementById('rawOutput');
+
+  const CIRC = 251.2;
+
+  ['dragenter','dragover'].forEach(evt =>
+    drop.addEventListener(evt, (e) => { e.preventDefault(); drop.classList.add('drag'); })
+  );
+  ['dragleave','drop'].forEach(evt =>
+    drop.addEventListener(evt, (e) => { e.preventDefault(); drop.classList.remove('drag'); })
+  );
+  drop.addEventListener('drop', (e) => {
+    if(e.dataTransfer.files.length){
+      fileInput.files = e.dataTransfer.files;
+      updateFilename();
+    }
+  });
+  fileInput.addEventListener('change', updateFilename);
+
+  function updateFilename(){
+    if(fileInput.files.length){
+      filenameEl.textContent = fileInput.files[0].name;
+      drop.classList.add('filled');
+    } else {
+      filenameEl.textContent = '';
+      drop.classList.remove('filled');
+    }
+  }
+
+  function setStatus(text, isError){
+    statusEl.style.display = 'flex';
+    statusEl.classList.toggle('error', !!isError);
+    statusEl.innerHTML = isError ? text : '<span class="spinner"></span>' + text;
+  }
+
+  function clearStatus(){
+    statusEl.style.display = 'none';
+  }
+
+  function setGauge(score){
+    const pct = Math.max(0, Math.min(100, Number(score) || 0));
+    const offset = CIRC - (CIRC * pct) / 100;
+    requestAnimationFrame(() => { gaugeFill.style.strokeDashoffset = offset; });
+    gaugeValue.textContent = Math.round(pct) + '%';
+
+    let color = 'var(--ember-500)', verdictText = 'Reading the temper…';
+    if(pct >= 80){ color = 'var(--success)'; verdictText = 'Strong fit. Ready to send.'; }
+    else if(pct >= 55){ color = 'var(--ember-400)'; verdictText = 'Workable, but needs another pass through the forge.'; }
+    else if(score !== undefined && score !== null){ color = 'var(--danger)'; verdictText = 'Still too raw for this role. Rework the sections below.'; }
+    gaugeFill.style.stroke = color;
+    verdict.textContent = verdictText;
+  }
+
+  function extractScore(data){
+    const keys = ['score','atsScore','ats_score','matchScore','match_score','fitScore','fit_score'];
+    for(const k of keys){ if(data && typeof data[k] === 'number') return data[k]; }
+    return null;
+  }
+
+  function buildCards(data){
+    cardStack.innerHTML = '';
+    const strengths = data.strengths || data.matched || data.matchedKeywords || null;
+    const gaps = data.gaps || data.missing || data.missingKeywords || data.suggestions || null;
+    const keywords = data.keywords || data.matchedKeywords || null;
+
+    if(Array.isArray(strengths) && strengths.length){
+      cardStack.appendChild(makeListCard('What holds', strengths, 'strength'));
+    }
+    if(Array.isArray(gaps) && gaps.length){
+      cardStack.appendChild(makeListCard('Where it breaks', gaps, 'gap'));
+    }
+    if(Array.isArray(keywords) && keywords.length){
+      const card = document.createElement('div');
+      card.className = 'card';
+      const h3 = document.createElement('h3');
+      h3.textContent = 'Matched keywords';
+      const kwWrap = document.createElement('div');
+      kwWrap.className = 'keywords';
+      keywords.forEach(k => {
+        const span = document.createElement('span');
+        span.className = 'kw';
+        span.textContent = typeof k === 'string' ? k : (k.term || k.keyword || JSON.stringify(k));
+        kwWrap.appendChild(span);
+      });
+      card.appendChild(h3);
+      card.appendChild(kwWrap);
+      cardStack.appendChild(card);
+    }
+    if(typeof data.summary === 'string' && data.summary.trim()){
+      const card = document.createElement('div');
+      card.className = 'card';
+      const h3 = document.createElement('h3');
+      h3.textContent = 'Summary';
+      const p = document.createElement('p');
+      p.textContent = data.summary;
+      card.appendChild(h3);
+      card.appendChild(p);
+      cardStack.appendChild(card);
+    }
+  }
+
+  function makeListCard(title, items, kind){
+    const card = document.createElement('div');
+    card.className = 'card ' + kind;
+    const h3 = document.createElement('h3');
+    h3.textContent = title;
+    const ul = document.createElement('ul');
+    items.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = typeof item === 'string' ? item : (item.text || JSON.stringify(item));
+      ul.appendChild(li);
     });
-  </script>
+    card.appendChild(h3);
+    card.appendChild(ul);
+    return card;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!fileInput.files.length) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Forging…';
+    setStatus('Reading your resume against the role…');
+    results.classList.remove('show');
+
+    const roleValue = document.getElementById('targetRole').value.trim();
+    roleTag.textContent = roleValue ? roleValue.toUpperCase() : 'GENERAL FIT';
+
+    try{
+      const res = await fetch('/api/analyze-resume', { method: 'POST', body: new FormData(form) });
+      if(!res.ok) throw new Error('Server responded with ' + res.status);
+      const data = await res.json();
+
+      const score = extractScore(data);
+      setGauge(score !== null ? score : 0);
+      if(score === null){ verdict.textContent = 'No score returned — check the raw response below.'; }
+      buildCards(data);
+
+      rawOutput.textContent = JSON.stringify(data, null, 2);
+      rawToggle.style.display = 'inline-block';
+      rawOutput.classList.remove('show');
+      rawToggle.textContent = 'View raw response';
+
+      results.classList.add('show');
+      clearStatus();
+    } catch(err){
+      setStatus('The forge went cold — ' + err.message + '. Try again.', true);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Cast into the forge';
+    }
+  });
+
+  rawToggle.addEventListener('click', () => {
+    const showing = rawOutput.classList.toggle('show');
+    rawToggle.textContent = showing ? 'Hide raw response' : 'View raw response';
+  });
+</script>
 </body>
 </html>
+
