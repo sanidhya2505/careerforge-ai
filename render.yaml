@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: careerforge-ai
+    env: node
+    plan: starter
+    buildCommand: npm ci --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: PORT
+        value: 3000

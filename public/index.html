@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>CareerForge AI</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"></script>
+</head>
+<body class="bg-gray-50 max-w-xl mx-auto p-8 font-sans">
+  <h1 class="text-2xl font-bold text-blue-900 mb-4">CareerForge AI — Resume Forge</h1>
+
+  <form id="form" class="space-y-3">
+    <input type="file" name="resume" accept="application/pdf" required class="border p-2 w-full rounded" />
+    <input type="text" name="targetRole" placeholder="Target role (e.g. SDE Intern)" class="border p-2 w-full rounded" />
+    <button class="bg-blue-900 text-white px-4 py-2 rounded">Analyze Resume</button>
+  </form>
+
+  <pre id="output" class="mt-6 bg-white p-4 rounded shadow text-sm whitespace-pre-wrap"></pre>
+
+  <script>
+    document.getElementById("form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const output = document.getElementById("output");
+      output.textContent = "Analyzing...";
+      const res = await fetch("/api/analyze-resume", { method: "POST", body: new FormData(e.target) });
+      output.textContent = JSON.stringify(await res.json(), null, 2);
+    });
+  </script>
+</body>
+</html>
